@@ -1,0 +1,21 @@
+name: Build Tweak
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install Theos
+      run: |
+        git clone --recursive https://github.com/theos/theos.git ~/theos
+        echo "THEOS=~/theos" >> $GITHUB_ENV
+        cd ~/theos/sdks
+        wget https://github.com/theos/sdks/raw/master/iPhoneOS15.8.sdk.zip
+        unzip iPhoneOS15.8.sdk.zip
+    - name: Build
+      run: make package
+    - name: Upload .deb
+      uses: actions/upload-artifact@v3
+      with:
+        name: tweak-deb
+        path: packages/*.deb
